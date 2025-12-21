@@ -520,11 +520,18 @@ export const icons: Icon[] = [
     svgPath: "/icons/Anna.svg",
   },
   {
-    id: "aleare",
-    name: "Aleare",
+    id: "alearm",
+    name: "Alear (M)",
     category: "fire emblem",
-    pngPath: "/icons/Aleare.png",
-    svgPath: "/icons/Aleare.svg",
+    pngPath: "/icons/AlearM.png",
+    svgPath: "/icons/AlearM.svg",
+  },
+  {
+    id: "alearf",
+    name: "Alear (F)",
+    category: "fire emblem",
+    pngPath: "/icons/AlearF.png",
+    svgPath: "/icons/AlearF.svg",
   },
   {
     id: "balloonfighter",
@@ -539,5 +546,19 @@ export const icons: Icon[] = [
     category: "kid icarus",
     pngPath: "/icons/Viridi.png",
     svgPath: "/icons/Viridi.svg",
+  },
+  {
+    id: "trunks",
+    name: "Trunks",
+    category: "dragon ball",
+    pngPath: "/icons/Trunks.png",
+    svgPath: "/icons/Trunks.svg",
+  },
+  {
+    id: "tag",
+    name: "Tag",
+    category: "modnation racers",
+    pngPath: "/icons/Tag.png",
+    svgPath: "/icons/Tag.svg",
   }
 ]
