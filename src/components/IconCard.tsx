@@ -34,7 +34,7 @@ export const IconCard = ({ icon }: Props) => {
         </p>
 
         {/* Category */}
-        <p className="mt-2 text-center text-xs uppercase text-zinc-500">
+        <p className="mt-2 text-center text-xs uppercase text-zinc-500 whitespace-nowrap overflow-hidden text-ellipsis w-full" title={icon.category}>
           {icon.category}
         </p>
       </div>
