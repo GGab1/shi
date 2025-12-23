@@ -520,14 +520,14 @@ export const icons: Icon[] = [
     svgPath: "/icons/Anna.svg",
   },
   {
-    id: "alearm",
+    id: "alear",
     name: "Alear (M)",
     category: "fire emblem",
     pngPath: "/icons/AlearM.png",
     svgPath: "/icons/AlearM.svg",
   },
   {
-    id: "alearf",
+    id: "alear",
     name: "Alear (F)",
     category: "fire emblem",
     pngPath: "/icons/AlearF.png",
@@ -646,14 +646,14 @@ export const icons: Icon[] = [
     svgPath: "/icons/Ardos.svg",
   },
   {
-    id: "blusix",
+    id: "hexagonbro",
     name: "Blusix",
     category: "pokemon",
     pngPath: "/icons/Blusix.png",
     svgPath: "/icons/Blusix.svg",
   },
   {
-    id: "browsix",
+    id: "hexagonbro",
     name: "Browsix",
     category: "pokemon",
     pngPath: "/icons/Browsix.png",
@@ -723,7 +723,7 @@ export const icons: Icon[] = [
     svgPath: "/icons/Gorigan.svg",
   },
   {
-    id: "greesix",
+    id: "hexagonbro",
     name: "Greesix",
     category: "pokemon",
     pngPath: "/icons/Greesix.png",
@@ -765,14 +765,14 @@ export const icons: Icon[] = [
     svgPath: "/icons/Nascour.svg",
   },
   {
-    id: "purpsix",
+    id: "hexagonbro",
     name: "Purpsix",
     category: "pokemon",
     pngPath: "/icons/Purpsix.png",
     svgPath: "/icons/Purpsix.svg",
   },
   {
-    id: "resix",
+    id: "hexagonbro",
     name: "Resix",
     category: "pokemon",
     pngPath: "/icons/Resix.png",
@@ -807,7 +807,7 @@ export const icons: Icon[] = [
     svgPath: "/icons/Willie.svg",
   },
   {
-    id: "yellosix",
+    id: "hexagonbro",
     name: "Yellosix",
     category: "pokemon",
     pngPath: "/icons/Yellosix.png",

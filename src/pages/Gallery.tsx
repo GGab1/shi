@@ -8,6 +8,7 @@ export const Gallery = () => {
   const [search, setSearch] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false)
+
   const categories = Array.from(new Set(icons.map(i => i.category)))
 
   const toggleCategory = (cat: string) => {
@@ -32,6 +33,18 @@ export const Gallery = () => {
     })
     .sort((a, b) => a.name.localeCompare(b.name))
 
+  // 🔥 REGROUPEMENT PAR ID
+  const groupedIcons = Object.values(
+    filteredIcons.reduce<Record<string, typeof filteredIcons>>(
+      (acc, icon) => {
+        if (!acc[icon.id]) acc[icon.id] = []
+        acc[icon.id].push(icon)
+        return acc
+      },
+      {}
+    )
+  )
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
       {/* Header */}
@@ -43,8 +56,14 @@ export const Gallery = () => {
           Choose your fighter
         </p>
         <p className="mt-2 text-xs">Icons made by GabUn</p>
-        <p className="mt-2 text-xs">All characters and franchises belong to their respective owners. This is a fan-made project and is not affiliated with or endorsed by any studio.</p>
-        <p className="mt-2 text-xs">You can freely use them for personal projects. For other types of projects, please send me a message. Thanks!</p>
+        <p className="mt-2 text-xs">
+          All characters and franchises belong to their respective owners.
+          This is a fan-made project and is not affiliated with or endorsed by any studio.
+        </p>
+        <p className="mt-2 text-xs">
+          You can freely use them for personal projects. For other types of projects,
+          please send me a message. Thanks!
+        </p>
       </header>
 
       {/* Filters */}
@@ -60,28 +79,38 @@ export const Gallery = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-        {filteredIcons.map(icon => (
-          <IconCard key={icon.id} icon={icon} />
+        {groupedIcons.map((iconsGroup) => (
+          <IconCard
+            key={iconsGroup[0].id}
+            icons={iconsGroup}
+          />
         ))}
       </div>
 
-      {/* Bouton flottant */}
+      {/* Bouton suggestion */}
       <button
         onClick={() => setIsSuggestionOpen(true)}
-        className="fixed bottom-6 right-6 w-16 h-16 rounded-full text-black font-bold text-lg shadow-lg hover:bg-yellow-500 transition flex items-center justify-center z-50"
+        className="fixed bottom-6 right-6 w-16 h-16 rounded-full
+                   text-black font-bold text-lg shadow-lg
+                   hover:bg-yellow-500 transition
+                   flex items-center justify-center z-50"
       >
         💡
       </button>
+
+      {/* Mail */}
       <a
         href="mailto:gabin.guerin1@gmail.com?subject=Message from Shi"
-        className="fixed bottom-6 left-6 w-16 h-16 rounded-full text-black font-bold text-lg shadow-lg hover:bg-yellow-500 transition flex items-center justify-center z-50"
+        className="fixed bottom-6 left-6 w-16 h-16 rounded-full
+                   text-black font-bold text-lg shadow-lg
+                   hover:bg-yellow-500 transition
+                   flex items-center justify-center z-50"
         title="Send me an email"
       >
         📧
       </a>
 
-
-      {/* Modale */}
+      {/* Modale suggestion */}
       {isSuggestionOpen && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
