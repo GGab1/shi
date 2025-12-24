@@ -1270,8 +1270,8 @@ export const icons: Icon[] = [
   },
   {
     id: "sailor",
-    name: "Navigator",
-    category: "Sailor",
+    name: "Sailor",
+    category: "pokemon",
     pngPath: "/icons/Sailor.png",
     svgPath: "/icons/Sailor.svg",
   },
