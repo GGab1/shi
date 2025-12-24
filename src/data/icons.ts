@@ -1309,5 +1309,19 @@ export const icons: Icon[] = [
     category: "pokemon",
     pngPath: "/icons/Vander.png",
     svgPath: "/icons/Vander.svg",
+  },
+  {
+    id: "frisk",
+    name: "Frisk",
+    category: "undertale",
+    pngPath: "/icons/Frisk.png",
+    svgPath: "/icons/Frisk.svg",
+  },
+  {
+    id: "toad",
+    name: "Toad",
+    category: "super mario",
+    pngPath: "/icons/Toad.png",
+    svgPath: "/icons/Toad.svg",
   }
 ]
