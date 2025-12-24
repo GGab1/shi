@@ -11,6 +11,12 @@ export const Gallery = () => {
 
   const categories = Array.from(new Set(icons.map(i => i.category)))
 
+  const categoryCounts = icons.reduce<Record<string, number>>((acc, icon) => {
+    acc[icon.category] = (acc[icon.category] || 0) + 1
+    return acc
+  }, {})
+
+
   const toggleCategory = (cat: string) => {
     setSelectedCategories(prev =>
       prev.includes(cat)
@@ -74,6 +80,7 @@ export const Gallery = () => {
           categories={categories}
           selectedCategories={selectedCategories}
           toggleCategory={toggleCategory}
+          categoryCounts={categoryCounts}
         />
       </div>
 

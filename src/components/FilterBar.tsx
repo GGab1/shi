@@ -6,6 +6,7 @@ type Props = {
   categories: string[]
   selectedCategories: string[]
   toggleCategory: (cat: string) => void
+  categoryCounts: Record<string, number>
 }
 
 export const FilterBar = ({
@@ -14,7 +15,9 @@ export const FilterBar = ({
   categories,
   selectedCategories,
   toggleCategory,
+  categoryCounts,
 }: Props) => {
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const [isDragging, setIsDragging] = useState(false)
@@ -28,10 +31,6 @@ export const FilterBar = ({
 
   const hasDragged = useRef(false)
   const DRAG_THRESHOLD = 6
-
-  /* ===============================
-     UTILS
-  =============================== */
 
   const stopMomentum = () => {
     if (momentumId.current) {
@@ -70,18 +69,6 @@ export const FilterBar = ({
     })
   }
 
-  /* ===============================
-     MOLETTE → SCROLL HORIZONTAL
-  =============================== */
-  const onWheelScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    if (!scrollRef.current) return
-    scrollRef.current.scrollLeft += e.deltaY
-  }
-
-  /* ===============================
-     GRAB & DRAG + INERTIE
-  =============================== */
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!scrollRef.current) return
     stopMomentum()
@@ -164,7 +151,6 @@ export const FilterBar = ({
 
         <div
           ref={scrollRef}
-          onWheel={onWheelScroll}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
           onMouseUp={endDrag}
@@ -192,6 +178,7 @@ export const FilterBar = ({
                 className={`
                   shrink-0 px-4 py-2 uppercase font-bold text-sm border-2
                   transition whitespace-nowrap
+                  flex items-center gap-2
                   ${
                     active
                       ? "bg-yellow-400 text-black border-yellow-400"
@@ -199,7 +186,20 @@ export const FilterBar = ({
                   }
                 `}
               >
-                {cat}
+                <span>{cat}</span>
+
+                <span
+                  className={`
+                    text-xs px-2 py-0.5 rounded-full font-bold
+                    ${
+                      active
+                        ? "bg-black/20 text-black"
+                        : "bg-zinc-800 text-zinc-400"
+                    }
+                  `}
+                >
+                  {categoryCounts[cat] ?? 0}
+                </span>
               </button>
             )
           })}
