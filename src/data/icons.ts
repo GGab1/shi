@@ -1274,5 +1274,40 @@ export const icons: Icon[] = [
     category: "pokemon",
     pngPath: "/icons/Teacher.png",
     svgPath: "/icons/Teacher.svg",
+  },
+  {
+    id: "athlete",
+    name: "Athlete (F)",
+    category: "pokemon",
+    pngPath: "/icons/AthleteF.png",
+    svgPath: "/icons/AthleteF.svg",
+  },
+  {
+    id: "athlete",
+    name: "Athlete (M)",
+    category: "pokemon",
+    pngPath: "/icons/AthleteM.png",
+    svgPath: "/icons/AthleteM.svg",
+  },
+  {
+    id: "curmudgon",
+    name: "Curmudgon",
+    category: "pokemon",
+    pngPath: "/icons/Curmudgon.png",
+    svgPath: "/icons/Curmudgon.svg",
+  },
+  {
+    id: "newscaster",
+    name: "Newscaster",
+    category: "pokemon",
+    pngPath: "/icons/Newscaster.png",
+    svgPath: "/icons/Newscaster.svg",
+  },
+  {
+    id: "vander",
+    name: "Vander",
+    category: "pokemon",
+    pngPath: "/icons/Vander.png",
+    svgPath: "/icons/Vander.svg",
   }
 ]
