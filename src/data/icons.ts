@@ -1144,6 +1144,13 @@ export const icons: Icon[] = [
   },
   {
     id: "supertrainer",
+    name: "Supertrainer (F/XD)",
+    category: "pokemon",
+    pngPath: "/icons/SupertrainerFxd.png",
+    svgPath: "/icons/SupertrainerFxd.svg",
+  },
+  {
+    id: "supertrainer",
     name: "Supertrainer (M)",
     category: "pokemon",
     pngPath: "/icons/SupertrainerM1.png",
