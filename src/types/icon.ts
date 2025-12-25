@@ -1,7 +1,7 @@
 export type Icon = {
-  id: string
+  character_id: string
   name: string
   category: string
-  pngPath?: string
-  svgPath?: string
+  pngpath?: string
+  svgpath?: string
 }

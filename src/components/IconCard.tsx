@@ -42,7 +42,7 @@ export const IconCard = ({ icons }: Props) => {
         {/* Image */}
         <div className="w-full h-full flex items-center justify-center">
           <img
-            src={icon.svgPath ?? icon.pngPath}
+            src={icon.svgpath ?? icon.pngpath}
             alt={icon.name}
             className="max-w-full max-h-full object-contain
                        group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
@@ -99,7 +99,7 @@ export const IconCard = ({ icons }: Props) => {
                        p-6 rounded-lg max-w-[90vw] max-h-[90vh]"
           >
             <img
-              src={icon.svgPath ?? icon.pngPath}
+              src={icon.svgpath ?? icon.pngpath}
               alt={icon.name}
               className="block mx-auto max-w-full max-h-[70vh] object-contain"
             />
@@ -110,9 +110,9 @@ export const IconCard = ({ icons }: Props) => {
               </p>
 
               <div className="mt-4 flex gap-3 justify-center">
-                {icon.svgPath && (
+                {icon.svgpath && (
                   <a
-                    href={icon.svgPath}
+                    href={icon.svgpath}
                     download
                     className="bg-yellow-400 text-black px-4 py-2
                                text-sm font-bold uppercase"
@@ -121,9 +121,9 @@ export const IconCard = ({ icons }: Props) => {
                   </a>
                 )}
 
-                {icon.pngPath && (
+                {icon.pngpath && (
                   <a
-                    href={icon.pngPath}
+                    href={icon.pngpath}
                     download
                     className="bg-yellow-400 text-black px-4 py-2
                                text-sm font-bold uppercase"

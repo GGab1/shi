@@ -1,21 +1,43 @@
-import { useState } from "react"
-import { icons } from "../data/icons"
+import { useEffect, useState } from "react"
+import { supabase } from "../lib/supabase"
 import { IconCard } from "../components/IconCard"
 import { FilterBar } from "../components/FilterBar"
 import { Suggestion } from "./Suggestion"
 
+import type { Icon } from "../types/icon"
+
 export const Gallery = () => {
+  const [icons, setIcons] = useState<Icon[]>([])
   const [search, setSearch] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
 
+  // 🔹 Fetch Supabase
+  useEffect(() => {
+    const fetchIcons = async () => {
+      const { data, error } = await supabase
+        .from("icons")
+        .select("*")
+
+      if (!error && data) {
+        setIcons(data)
+      }
+
+      setLoading(false)
+    }
+
+    fetchIcons()
+  }, [])
+
+  // 🔹 Catégories uniques
   const categories = Array.from(new Set(icons.map(i => i.category)))
 
+  // 🔹 Compteur par catégorie
   const categoryCounts = icons.reduce<Record<string, number>>((acc, icon) => {
     acc[icon.category] = (acc[icon.category] || 0) + 1
     return acc
   }, {})
-
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories(prev =>
@@ -25,8 +47,9 @@ export const Gallery = () => {
     )
   }
 
+  // 🔹 Filtres
   const filteredIcons = icons
-    .filter((icon) => {
+    .filter(icon => {
       const matchesCategory =
         selectedCategories.length === 0 ||
         selectedCategories.includes(icon.category)
@@ -39,16 +62,13 @@ export const Gallery = () => {
     })
     .sort((a, b) => a.name.localeCompare(b.name))
 
-  // 🔥 REGROUPEMENT PAR ID
+  // 🔥 Regroupement par character_id
   const groupedIcons = Object.values(
-    filteredIcons.reduce<Record<string, typeof filteredIcons>>(
-      (acc, icon) => {
-        if (!acc[icon.id]) acc[icon.id] = []
-        acc[icon.id].push(icon)
-        return acc
-      },
-      {}
-    )
+    filteredIcons.reduce<Record<string, Icon[]>>((acc, icon) => {
+      if (!acc[icon.character_id]) acc[icon.character_id] = []
+      acc[icon.character_id].push(icon)
+      return acc
+    }, {})
   )
 
   return (
@@ -84,15 +104,22 @@ export const Gallery = () => {
         />
       </div>
 
+      {/* Loading */}
+      {loading && (
+        <p className="text-center text-zinc-400">Loading icons...</p>
+      )}
+
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-        {groupedIcons.map((iconsGroup) => (
-          <IconCard
-            key={iconsGroup[0].id}
-            icons={iconsGroup}
-          />
-        ))}
-      </div>
+      {!loading && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+          {groupedIcons.map(group => (
+            <IconCard
+              key={group[0].character_id}
+              icons={group}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Bouton suggestion */}
       <button
@@ -125,7 +152,7 @@ export const Gallery = () => {
         >
           <div
             className="bg-zinc-900 p-6 rounded-lg max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <Suggestion />
             <button
