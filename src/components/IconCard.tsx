@@ -22,6 +22,23 @@ export const IconCard = ({ icons }: Props) => {
     setIndex(i => (i + 1) % icons.length)
   }
 
+  const downloadFile = async (url: string, filename: string) => {
+    const res = await fetch(url)
+    const blob = await res.blob()
+
+    const blobUrl = window.URL.createObjectURL(blob)
+    const a = document.createElement("a")
+
+    a.href = blobUrl
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+
+    a.remove()
+    window.URL.revokeObjectURL(blobUrl)
+  }
+
+
   return (
     <>
       {/* Card */}
@@ -110,26 +127,30 @@ export const IconCard = ({ icons }: Props) => {
               </p>
 
               <div className="mt-4 flex gap-3 justify-center">
-                {icon.svgpath && (
-                  <a
-                    href={icon.svgpath}
-                    download
-                    className="bg-yellow-400 text-black px-4 py-2
-                               text-sm font-bold uppercase"
-                  >
-                    Download SVG
-                  </a>
-                )}
-
                 {icon.pngpath && (
-                  <a
-                    href={icon.pngpath}
-                    download
+                  <button
+                    onClick={() => {
+                      if (!icon.pngpath) return
+                      downloadFile(icon.pngpath, `${icon.name}.png`)
+                    }}
                     className="bg-yellow-400 text-black px-4 py-2
-                               text-sm font-bold uppercase"
+                              text-sm font-bold uppercase"
                   >
                     Download PNG
-                  </a>
+                  </button>
+                )}
+
+                {icon.svgpath && (
+                  <button
+                    onClick={() => {
+                      if (!icon.svgpath) return
+                      downloadFile(icon.svgpath, `${icon.name}.svg`)
+                    }}
+                    className="bg-yellow-400 text-black px-4 py-2
+                              text-sm font-bold uppercase"
+                  >
+                    Download SVG
+                  </button>
                 )}
               </div>
             </div>
