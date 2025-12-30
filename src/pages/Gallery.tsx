@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase"
 import { IconCard } from "../components/IconCard"
 import { FilterBar } from "../components/FilterBar"
 import { Suggestion } from "./Suggestion"
+import { CommissionBanner } from "../components/CommissionBanner"
 
 import type { Icon } from "../types/icon"
 
@@ -72,98 +73,101 @@ export const Gallery = () => {
   )
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white px-6 py-10">
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <CommissionBanner />
       {/* Header */}
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-widest">
-          SMASH HEAD ICONS
-        </h1>
-        <p className="text-zinc-400 mt-2 uppercase tracking-wider text-sm">
-          Choose your fighter
-        </p>
-        <p className="mt-2 text-xs">Icons made by GabUn</p>
-        <p className="mt-2 text-xs">
-          All characters and franchises belong to their respective owners.
-          This is a fan-made project and is not affiliated with or endorsed by any studio.
-        </p>
-        <p className="mt-2 text-xs">
-          You can freely use them for personal projects. For other types of projects,
-          please send me a message. Thanks!
-        </p>
-      </header>
+      <div className="px-6 py-10">
+        <header className="mb-10 text-center">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-widest">
+            SMASH HEAD ICONS
+          </h1>
+          <p className="text-zinc-400 mt-2 uppercase tracking-wider text-sm">
+            Choose your fighter
+          </p>
+          <p className="mt-2 text-xs">Icons made by GabUn</p>
+          <p className="mt-2 text-xs">
+            All characters and franchises belong to their respective owners.
+            This is a fan-made project and is not affiliated with or endorsed by any studio.
+          </p>
+          <p className="mt-2 text-xs">
+            You can freely use them for personal projects. For other types of projects,
+            please send me a message. Thanks!
+          </p>
+        </header>
 
-      {/* Filters */}
-      <div className="mb-10">
-        <FilterBar
-          search={search}
-          setSearch={setSearch}
-          categories={categories}
-          selectedCategories={selectedCategories}
-          toggleCategory={toggleCategory}
-          categoryCounts={categoryCounts}
-        />
-      </div>
+        {/* Filters */}
+        <div className="mb-10">
+          <FilterBar
+            search={search}
+            setSearch={setSearch}
+            categories={categories}
+            selectedCategories={selectedCategories}
+            toggleCategory={toggleCategory}
+            categoryCounts={categoryCounts}
+            />
+        </div>
 
-      {/* Loading */}
-      {loading && (
-        <p className="text-center text-zinc-400">Loading icons...</p>
-      )}
+        {/* Loading */}
+        {loading && (
+          <p className="text-center text-zinc-400">Loading icons...</p>
+        )}
 
-      {/* Grid */}
-      {!loading && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-          {groupedIcons.map(group => (
-            <IconCard
+        {/* Grid */}
+        {!loading && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+            {groupedIcons.map(group => (
+              <IconCard
               key={group[0].character_id}
               icons={group}
-            />
-          ))}
-        </div>
-      )}
+              />
+            ))}
+          </div>
+        )}
 
-      {/* Bouton suggestion */}
-      <button
-        onClick={() => setIsSuggestionOpen(true)}
-        className="fixed bottom-6 right-6 w-16 h-16 rounded-full
-                   text-black font-bold text-lg shadow-lg
-                   hover:bg-yellow-500 transition
-                   flex items-center justify-center z-50"
-      >
-        💡
-      </button>
+        {/* Bouton suggestion */}
+        <button
+          onClick={() => setIsSuggestionOpen(true)}
+          className="fixed bottom-6 right-6 w-16 h-16 rounded-full
+          text-black font-bold text-lg shadow-lg
+          hover:bg-yellow-500 transition
+          flex items-center justify-center z-50"
+          >
+          💡
+        </button>
 
-      {/* Mail */}
-      <a
-        href="mailto:gabin.guerin1@gmail.com?subject=Message from Shi"
-        className="fixed bottom-6 left-6 w-16 h-16 rounded-full
-                   text-black font-bold text-lg shadow-lg
-                   hover:bg-yellow-500 transition
-                   flex items-center justify-center z-50"
-        title="Send me an email"
-      >
-        📧
-      </a>
+        {/* Mail */}
+        <a
+          href="mailto:gabin.guerin1@gmail.com?subject=Message from Shi"
+          className="fixed bottom-6 left-6 w-16 h-16 rounded-full
+          text-black font-bold text-lg shadow-lg
+          hover:bg-yellow-500 transition
+          flex items-center justify-center z-50"
+          title="Send me an email"
+        >
+          📧
+        </a>
 
-      {/* Modale suggestion */}
-      {isSuggestionOpen && (
-        <div
+        {/* Modale suggestion */}
+        {isSuggestionOpen && (
+          <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
           onClick={() => setIsSuggestionOpen(false)}
-        >
-          <div
-            className="bg-zinc-900 p-6 rounded-lg max-w-md w-full"
-            onClick={e => e.stopPropagation()}
           >
-            <Suggestion />
-            <button
-              onClick={() => setIsSuggestionOpen(false)}
-              className="mt-4 bg-red-600 px-4 py-2 rounded font-bold text-sm"
-            >
-              Close
-            </button>
+            <div
+              className="bg-zinc-900 p-6 rounded-lg max-w-md w-full"
+              onClick={e => e.stopPropagation()}
+              >
+              <Suggestion />
+              <button
+                onClick={() => setIsSuggestionOpen(false)}
+                className="mt-4 bg-red-600 px-4 py-2 rounded font-bold text-sm"
+                >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
