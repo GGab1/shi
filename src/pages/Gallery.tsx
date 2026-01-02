@@ -4,6 +4,7 @@ import { IconCard } from "../components/IconCard"
 import { FilterBar } from "../components/FilterBar"
 import { Suggestion } from "./Suggestion"
 import { CommissionBanner } from "../components/CommissionBanner"
+import { SuggestionList } from "../components/SuggestionList"
 
 import type { Icon } from "../types/icon"
 
@@ -13,6 +14,7 @@ export const Gallery = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false)
 
   // 🔹 Fetch Supabase
   useEffect(() => {
@@ -135,6 +137,18 @@ export const Gallery = () => {
           💡
         </button>
 
+        <button
+          onClick={() => setIsSuggestionListOpen(true)}
+          className="fixed bottom-6 right-24 w-16 h-16 rounded-full
+                    text-black font-bold text-lg shadow-lg
+                    hover:bg-yellow-500 transition
+                    flex items-center justify-center z-50"
+          title="Already suggested characters"
+        >
+          📋
+        </button>
+
+
         {/* Mail */}
         <a
           href="mailto:gabin.guerin1@gmail.com?subject=Message from Shi"
@@ -167,6 +181,46 @@ export const Gallery = () => {
             </div>
           </div>
         )}
+
+        {/* Modale liste */}
+        {isSuggestionListOpen && (
+          <div
+            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4"
+            onClick={() => setIsSuggestionListOpen(false)}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              className="bg-zinc-900 rounded-lg w-full max-w-5xl
+                        max-h-[90vh] flex flex-col overflow-hidden"
+            >
+              {/* Header fixe */}
+              <div
+                className="flex items-center justify-between
+                          px-6 py-4 border-b border-zinc-700"
+              >
+                <h2 className="font-extrabold tracking-widest uppercase text-sm sm:text-base">
+                  Already suggested characters
+                </h2>
+
+                <button
+                  onClick={() => setIsSuggestionListOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center
+                            text-zinc-400 hover:text-white
+                            hover:bg-zinc-800 rounded-full transition"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Contenu scrollable */}
+              <div className="p-6 overflow-y-auto">
+                <SuggestionList />
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )
