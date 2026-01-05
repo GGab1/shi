@@ -15,6 +15,7 @@ export const Gallery = () => {
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false)
+  const [franchiseSearch, setFranchiseSearch] = useState("")
 
   // 🔹 Fetch Supabase
   useEffect(() => {
@@ -57,13 +58,18 @@ export const Gallery = () => {
         selectedCategories.length === 0 ||
         selectedCategories.includes(icon.category)
 
-      const matchesSearch = icon.name
+      const matchesName = icon.name
         .toLowerCase()
         .includes(search.toLowerCase())
 
-      return matchesCategory && matchesSearch
+      const matchesFranchise = icon.category
+        .toLowerCase()
+        .includes(franchiseSearch.toLowerCase())
+
+      return matchesCategory && matchesName && matchesFranchise
     })
     .sort((a, b) => a.name.localeCompare(b.name))
+
 
   // 🔥 Regroupement par character_id
   const groupedIcons = Object.values(
@@ -102,11 +108,13 @@ export const Gallery = () => {
           <FilterBar
             search={search}
             setSearch={setSearch}
+            franchiseSearch={franchiseSearch}
+            setFranchiseSearch={setFranchiseSearch}
             categories={categories}
             selectedCategories={selectedCategories}
             toggleCategory={toggleCategory}
             categoryCounts={categoryCounts}
-            />
+          />
         </div>
 
         {/* Loading */}

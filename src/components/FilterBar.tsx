@@ -3,6 +3,8 @@ import { useRef, useState } from "react"
 type Props = {
   search: string
   setSearch: (v: string) => void
+  franchiseSearch: string
+  setFranchiseSearch: (v: string) => void
   categories: string[]
   selectedCategories: string[]
   toggleCategory: (cat: string) => void
@@ -12,6 +14,8 @@ type Props = {
 export const FilterBar = ({
   search,
   setSearch,
+  franchiseSearch,
+  setFranchiseSearch,
   categories,
   selectedCategories,
   toggleCategory,
@@ -127,16 +131,35 @@ export const FilterBar = ({
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Search */}
-      <input
-        type="text"
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Search"
-        className="w-full bg-zinc-900 border-2 border-zinc-700
-                   px-4 py-3 text-white tracking-wider
-                   placeholder-zinc-500 focus:border-yellow-400
-                   outline-none"
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Character search */}
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search character"
+          className="
+            w-full bg-zinc-900 border-2 border-zinc-700
+            px-4 py-3 text-white tracking-wider
+            placeholder-zinc-500 focus:border-yellow-400
+            outline-none
+          "
+        />
+
+        {/* Franchise search */}
+        <input
+          type="text"
+          value={franchiseSearch}
+          onChange={e => setFranchiseSearch(e.target.value)}
+          placeholder="Search franchise"
+          className="
+            w-full bg-zinc-900 border-2 border-zinc-700
+            px-4 py-3 text-white tracking-wider
+            placeholder-zinc-500 focus:border-yellow-400
+            outline-none
+          "
+        />
+      </div>
 
       {/* Categories */}
       <div className="flex items-center gap-2">
