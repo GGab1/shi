@@ -156,7 +156,6 @@ export const Gallery = () => {
           📋
         </button>
 
-
         {/* Mail */}
         <a
           href="mailto:gabin.guerin1@gmail.com?subject=Message from Shi"
@@ -167,6 +166,19 @@ export const Gallery = () => {
           title="Send me an email"
         >
           📧
+        </a>
+
+        {/* Portfolio */}
+        <a
+          href="https://gabun-portfolio.vercel.app/"
+          className="fixed bottom-6 left-24 w-16 h-16 rounded-full
+          text-black font-bold text-lg shadow-lg
+          hover:bg-yellow-500 transition
+          flex items-center justify-center z-50"
+          title="See my portolio"
+          target="_blank"
+        >
+          👤
         </a>
 
         {/* Modale suggestion */}
