@@ -5,6 +5,7 @@ import { FilterBar } from "../components/FilterBar"
 import { Suggestion } from "./Suggestion"
 import { CommissionBanner } from "../components/CommissionBanner"
 import { SuggestionList } from "../components/SuggestionList"
+import { QuizModal } from "../components/QuizModal"
 
 import type { Icon } from "../types/icon"
 
@@ -16,6 +17,8 @@ export const Gallery = () => {
   const [loading, setLoading] = useState(true)
   const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false)
   const [franchiseSearch, setFranchiseSearch] = useState("")
+  // const [isQuizOpen, setIsQuizOpen] = useState(false)
+  const [quizOpen, setQuizOpen] = useState(false)
 
   // 🔹 Fetch Supabase
   useEffect(() => {
@@ -101,6 +104,26 @@ export const Gallery = () => {
             You can freely use them for personal projects. For other types of projects,
             please send me a message. Thanks!
           </p>
+
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setQuizOpen(true)}
+              className="
+                flex items-center gap-2
+                px-6 py-3
+                rounded-xl
+                bg-zinc-800
+                border border-zinc-700
+                font-bold uppercase text-sm
+                hover:border-yellow-400
+                hover:text-yellow-400
+                transition
+              "
+            >
+              🎮 Test Mode
+            </button>
+          </div>
+
         </header>
 
         {/* Filters */}
@@ -132,6 +155,13 @@ export const Gallery = () => {
               />
             ))}
           </div>
+        )}
+
+        {quizOpen && (
+          <QuizModal
+            icons={icons}
+            onClose={() => setQuizOpen(false)}
+          />
         )}
 
         {/* Bouton suggestion */}
