@@ -147,7 +147,7 @@ export const Gallery = () => {
         {/* Loading */}
         {loading && (
           <p className="text-center text-zinc-400">Loading icons...</p>
-        )}
+        )} 
 
         {/* Grid */}
         {!loading && (
