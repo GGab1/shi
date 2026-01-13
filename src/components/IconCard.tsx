@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { Icon } from "../types/icon"
+import { useSeenCharacters } from "../hooks/useSeenCharacters"
 
 type Props = {
   icons: Icon[]
@@ -8,6 +9,7 @@ type Props = {
 export const IconCard = ({ icons }: Props) => {
   const [open, setOpen] = useState(false)
   const [index, setIndex] = useState(0)
+  const { hasSeen, markAsSeen } = useSeenCharacters()
 
   const hasMultiple = icons.length > 1
   const icon = icons[index]
@@ -16,6 +18,9 @@ export const IconCard = ({ icons }: Props) => {
     e.stopPropagation()
     setIndex(i => (i - 1 + icons.length) % icons.length)
   }
+
+  const characterId = icons[0].character_id
+  const isNew = !hasSeen(characterId)
 
   const next = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -43,11 +48,29 @@ export const IconCard = ({ icons }: Props) => {
     <>
       {/* Card */}
       <div
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          markAsSeen(characterId)
+          setOpen(true)
+        }}
         className="relative group cursor-pointer bg-zinc-900 border-2 border-zinc-700
                    rounded-md p-3 aspect-square
                    hover:scale-105 transition-all duration-200"
       >
+
+        {isNew && (
+          <span
+            className="
+              absolute top-2 right-2
+              w-3 h-3
+              bg-cyan-400
+              rounded-full
+              shadow-[0_0_8px_2px_rgba(34,211,238,0.8)]
+              animate-pulse
+              transition-opacity duration-300
+            "
+          />
+        )}
+
         {/* Badge count */}
         {hasMultiple && (
           <div className="absolute top-2 right-2 bg-zinc-900 border-2 border-zinc-700 text-white

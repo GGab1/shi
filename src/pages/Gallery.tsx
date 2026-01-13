@@ -73,7 +73,6 @@ export const Gallery = () => {
     })
     .sort((a, b) => a.name.localeCompare(b.name))
 
-
   // 🔥 Regroupement par character_id
   const groupedIcons = Object.values(
     filteredIcons.reduce<Record<string, Icon[]>>((acc, icon) => {
@@ -104,6 +103,11 @@ export const Gallery = () => {
             You can freely use them for personal projects. For other types of projects,
             please send me a message. Thanks!
           </p>
+          <div className="mt-4 flex justify-center gap-4">
+            <span className="px-3 py-1 text-sm font-bold">
+              🎨 {icons.length} icons
+            </span>
+          </div>
 
           <div className="mt-6 flex justify-center">
             <button
