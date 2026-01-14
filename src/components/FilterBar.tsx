@@ -165,7 +165,7 @@ export const FilterBar = ({
         <button
           onClick={() => setSortNew(v => !v)}
           className={`
-            flex-[1]
+            flex-[1] rounded-none
             flex items-center justify-center
             border-2 font-bold uppercase text-sm
             transition
