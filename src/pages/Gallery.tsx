@@ -227,7 +227,7 @@ export const Gallery = () => {
           title="Go to my Ko Fi"
           target="_blank"
         >
-          <img alt="Ko Fi logo" src="../../public/KoFiLogo.webp"/>
+          <img alt="Ko Fi logo" src="/KoFiLogo.webp"/>
         </a>
 
         {/* Modale suggestion */}
