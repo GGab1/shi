@@ -6,6 +6,7 @@ import { Suggestion } from "./Suggestion"
 import { CommissionBanner } from "../components/CommissionBanner"
 import { SuggestionList } from "../components/SuggestionList"
 import { QuizModal } from "../components/QuizModal"
+import { useSeenCharacters } from "../hooks/useSeenCharacters"
 
 import type { Icon } from "../types/icon"
 
@@ -17,8 +18,9 @@ export const Gallery = () => {
   const [loading, setLoading] = useState(true)
   const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false)
   const [franchiseSearch, setFranchiseSearch] = useState("")
-  // const [isQuizOpen, setIsQuizOpen] = useState(false)
+  const [sortNew, setSortNew] = useState(false)
   const [quizOpen, setQuizOpen] = useState(false)
+  const { hasSeen, markAsSeen } = useSeenCharacters()
 
   // 🔹 Fetch Supabase
   useEffect(() => {
@@ -69,7 +71,15 @@ export const Gallery = () => {
         .toLowerCase()
         .includes(franchiseSearch.toLowerCase())
 
-      return matchesCategory && matchesName && matchesFranchise
+      const matchesSeen =
+        !sortNew || !hasSeen(icon.character_id)
+
+      return (
+        matchesCategory &&
+        matchesName &&
+        matchesFranchise &&
+        matchesSeen
+      )
     })
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -141,6 +151,8 @@ export const Gallery = () => {
             selectedCategories={selectedCategories}
             toggleCategory={toggleCategory}
             categoryCounts={categoryCounts}
+            sortNew={sortNew}
+            setSortNew={setSortNew}
           />
         </div>
 
@@ -154,8 +166,10 @@ export const Gallery = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
             {groupedIcons.map(group => (
               <IconCard
-              key={group[0].character_id}
-              icons={group}
+                key={group[0].character_id}
+                icons={group}
+                hasSeen={hasSeen}
+                markAsSeen={markAsSeen}
               />
             ))}
           </div>

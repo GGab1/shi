@@ -1,15 +1,15 @@
 import { useState } from "react"
 import type { Icon } from "../types/icon"
-import { useSeenCharacters } from "../hooks/useSeenCharacters"
 
 type Props = {
   icons: Icon[]
+  hasSeen: (id: string) => boolean
+  markAsSeen: (id: string) => void
 }
 
-export const IconCard = ({ icons }: Props) => {
+export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
   const [open, setOpen] = useState(false)
   const [index, setIndex] = useState(0)
-  const { hasSeen, markAsSeen } = useSeenCharacters()
 
   const hasMultiple = icons.length > 1
   const icon = icons[index]
@@ -49,7 +49,6 @@ export const IconCard = ({ icons }: Props) => {
       {/* Card */}
       <div
         onClick={() => {
-          markAsSeen(characterId)
           setOpen(true)
         }}
         className="relative group cursor-pointer bg-zinc-900 border-2 border-zinc-700
@@ -60,7 +59,7 @@ export const IconCard = ({ icons }: Props) => {
         {isNew && (
           <span
             className="
-              absolute top-2 right-2
+              absolute top-2 left-2
               w-3 h-3
               bg-cyan-400
               rounded-full
@@ -131,7 +130,10 @@ export const IconCard = ({ icons }: Props) => {
       {open && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false)
+            markAsSeen(characterId)
+          }}
         >
           <div
             onClick={e => e.stopPropagation()}

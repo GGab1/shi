@@ -1,4 +1,5 @@
 import { useRef, useState } from "react"
+import type { Dispatch, SetStateAction } from "react"
 
 type Props = {
   search: string
@@ -9,7 +10,10 @@ type Props = {
   selectedCategories: string[]
   toggleCategory: (cat: string) => void
   categoryCounts: Record<string, number>
+  sortNew: boolean
+  setSortNew: Dispatch<SetStateAction<boolean>>
 }
+
 
 export const FilterBar = ({
   search,
@@ -20,6 +24,8 @@ export const FilterBar = ({
   selectedCategories,
   toggleCategory,
   categoryCounts,
+  sortNew,
+  setSortNew,
 }: Props) => {
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -131,35 +137,49 @@ export const FilterBar = ({
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Search */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Character search */}
-        <input
-          type="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search character"
-          className="
-            w-full bg-zinc-900 border-2 border-zinc-700
-            px-4 py-3 text-white tracking-wider
-            placeholder-zinc-500 focus:border-yellow-400
-            outline-none
-          "
-        />
+      <div className="flex gap-4">
+        {/* Inputs */}
+        <div className="flex flex-col md:flex-row gap-4 flex-[4]">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search character"
+            className="w-full bg-zinc-900 border-2 border-zinc-700
+                      px-4 py-3 text-white tracking-wider
+                      placeholder-zinc-500 focus:border-yellow-400 outline-none"
+          />
 
-        {/* Franchise search */}
-        <input
-          type="text"
-          value={franchiseSearch}
-          onChange={e => setFranchiseSearch(e.target.value)}
-          placeholder="Search franchise"
-          className="
-            w-full bg-zinc-900 border-2 border-zinc-700
-            px-4 py-3 text-white tracking-wider
-            placeholder-zinc-500 focus:border-yellow-400
-            outline-none
-          "
-        />
+          <input
+            type="text"
+            value={franchiseSearch}
+            onChange={e => setFranchiseSearch(e.target.value)}
+            placeholder="Search franchise"
+            className="w-full bg-zinc-900 border-2 border-zinc-700
+                      px-4 py-3 text-white tracking-wider
+                      placeholder-zinc-500 focus:border-yellow-400 outline-none"
+          />
+        </div>
+
+        {/* Sort new */}
+        <button
+          onClick={() => setSortNew(v => !v)}
+          className={`
+            flex-[1]
+            flex items-center justify-center
+            border-2 font-bold uppercase text-sm
+            transition
+            ${
+              sortNew
+                ? "bg-cyan-400 text-black border-cyan-400"
+                : "bg-zinc-900 text-zinc-300 border-zinc-700 hover:border-cyan-400"
+            }
+          `}
+        >
+          Sort new
+        </button>
       </div>
+
 
       {/* Categories */}
       <div className="flex items-center gap-2">
