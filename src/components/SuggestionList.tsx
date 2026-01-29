@@ -115,20 +115,21 @@ export const SuggestionList = () => {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {Object.entries(data)
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([franchise, characters]) => (
+          .map(([franchise, characters], index) => (
             <div
               key={franchise}
-              className="
-                rounded-2xl p-4
-                bg-gradient-to-br from-zinc-900/80 to-zinc-800/80
-                border border-cyan-400/20
-              "
+              className="rounded-2xl p-4 bg-gradient-to-br from-zinc-900/80 to-zinc-800/80 border border-cyan-400/20"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-7 h-7 flex items-center justify-center rounded-full text-xs font-extrabold shrink-0">
+                  {index + 1}
+                </span>
+
                 <h3 className="uppercase tracking-widest text-sm font-bold text-cyan-300">
                   {franchise}
                 </h3>
-                <span className="text-xs font-bold bg-yellow-400 text-black px-3 py-1 rounded-full">
+
+                <span className="ml-auto text-xs font-bold bg-yellow-400 text-black px-3 py-1 rounded-full">
                   {characters.length}
                 </span>
               </div>
