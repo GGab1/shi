@@ -1,143 +1,136 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../lib/supabase"
-import { IconCard } from "../components/IconCard"
-import { FilterBar } from "../components/FilterBar"
-import { Suggestion } from "./Suggestion"
-import { CommissionBanner } from "../components/CommissionBanner"
-import { SuggestionList } from "../components/SuggestionList"
-import { QuizModal } from "../components/QuizModal"
-import { useSeenCharacters } from "../hooks/useSeenCharacters"
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import { IconCard } from "../components/IconCard";
+import { FilterBar } from "../components/FilterBar";
+import { Suggestion } from "./Suggestion";
+import { CommissionBanner } from "../components/CommissionBanner";
+import { SuggestionList } from "../components/SuggestionList";
+import { QuizModal } from "../components/QuizModal";
+import { useSeenCharacters } from "../hooks/useSeenCharacters";
 
-import type { Icon } from "../types/icon"
+import type { Icon } from "../types/icon";
 
 export const Gallery = () => {
-  const [icons, setIcons] = useState<Icon[]>([])
-  const [search, setSearch] = useState("")
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false)
-  const [franchiseSearch, setFranchiseSearch] = useState("")
-  const [sortNew, setSortNew] = useState(false)
-  const [quizOpen, setQuizOpen] = useState(false)
-  const { hasSeen, markAsSeen } = useSeenCharacters()
+  const [icons, setIcons] = useState<Icon[]>([]);
+  const [search, setSearch] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isSuggestionListOpen, setIsSuggestionListOpen] = useState(false);
+  const [franchiseSearch, setFranchiseSearch] = useState("");
+  const [sortNew, setSortNew] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const { hasSeen, markAsSeen } = useSeenCharacters();
 
-  // 🔹 Fetch Supabase
   useEffect(() => {
     const fetchIcons = async () => {
-      const { data, error } = await supabase
-        .from("icons")
-        .select("*")
+      const { data, error } = await supabase.from("icons").select("*");
 
       if (!error && data) {
-        setIcons(data)
+        setIcons(data);
       }
 
-      setLoading(false)
-    }
+      setLoading(false);
+    };
 
-    fetchIcons()
-  }, [])
+    fetchIcons();
+  }, []);
 
-  // 🔹 Catégories uniques
-  const categories = Array.from(new Set(icons.map(i => i.category)))
+  const categories = Array.from(new Set(icons.map((i) => i.category)));
 
-  // 🔹 Compteur par catégorie
   const categoryCounts = icons.reduce<Record<string, number>>((acc, icon) => {
-    acc[icon.category] = (acc[icon.category] || 0) + 1
-    return acc
-  }, {})
+    acc[icon.category] = (acc[icon.category] || 0) + 1;
+    return acc;
+  }, {});
 
   const toggleCategory = (cat: string) => {
-    setSelectedCategories(prev =>
-      prev.includes(cat)
-        ? prev.filter(c => c !== cat)
-        : [...prev, cat]
-    )
-  }
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+    );
+  };
 
-  // 🔹 Filtres
   const filteredIcons = icons
-    .filter(icon => {
+    .filter((icon) => {
       const matchesCategory =
         selectedCategories.length === 0 ||
-        selectedCategories.includes(icon.category)
+        selectedCategories.includes(icon.category);
 
       const matchesName = icon.name
         .toLowerCase()
-        .includes(search.toLowerCase())
+        .includes(search.toLowerCase());
 
       const matchesFranchise = icon.category
         .toLowerCase()
-        .includes(franchiseSearch.toLowerCase())
+        .includes(franchiseSearch.toLowerCase());
 
-      const matchesSeen =
-        !sortNew || !hasSeen(icon.character_id)
+      const matchesSeen = !sortNew || !hasSeen(icon.character_id);
 
-      return (
-        matchesCategory &&
-        matchesName &&
-        matchesFranchise &&
-        matchesSeen
-      )
+      return matchesCategory && matchesName && matchesFranchise && matchesSeen;
     })
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  // 🔥 Regroupement par character_id
   const groupedIcons = Object.values(
     filteredIcons.reduce<Record<string, Icon[]>>((acc, icon) => {
-      if (!acc[icon.character_id]) acc[icon.character_id] = []
-      acc[icon.character_id].push(icon)
-      return acc
-    }, {})
-  )
+      if (!acc[icon.character_id]) acc[icon.character_id] = [];
+      acc[icon.character_id].push(icon);
+      return acc;
+    }, {}),
+  );
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#121212] to-[#0a0a0a] text-white">
       <CommissionBanner />
-      {/* Header */}
-      <div className="px-6 py-10">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-widest">
-            SMASH HEAD ICONS
-          </h1>
-          <p className="text-zinc-400 mt-2 uppercase tracking-wider text-sm">
-            Choose your fighter
-          </p>
-          <p className="mt-2 text-xs">Icons made by GabUn</p>
-          <p className="mt-2 text-xs">
-            All characters and franchises belong to their respective owners.
-            This is a fan-made project and is not affiliated with or endorsed by any studio.
-          </p>
-          <p className="mt-2 text-xs">
-            You can freely use them for personal projects. For other types of projects,
-            please send me a message. Thanks!
-          </p>
-          <div className="mt-4 flex justify-center gap-4">
-            <span className="px-3 py-1 text-sm font-bold">
-              🎨 {icons.length} icons
-            </span>
+
+      {/* Main container with max width */}
+      <div className="max-w-[1800px] mx-auto px-6 py-8 lg:px-12 lg:py-12">
+        {/* Header */}
+        <header className="mb-12">
+          {/* Title and subtitle - centered */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl lg:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+              Smash Head Icons
+            </h1>
+            <p className="text-gray-400 mt-3 text-lg font-medium">
+              Choose your fighter
+            </p>
           </div>
 
+          {/* Stats bubble - centered */}
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center gap-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-5 py-2.5">
+              <span className="text-xl">🎨</span>
+              <div className="flex items-baseline gap-1.5">
+                <p className="text-xl font-bold">{icons.length}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">
+                  icons
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Credits and info */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 space-y-3">
+            <p className="text-sm text-gray-300">
+              <span className="font-semibold">Created by GabUn</span> • All
+              characters and franchises belong to their respective owners
+            </p>
+            <p className="text-sm text-gray-400">
+              Free for personal use. For commercial projects, please contact me.
+            </p>
+          </div>
+
+          {/* Quiz button - centered */}
           <div className="mt-6 flex justify-center">
             <button
               onClick={() => setQuizOpen(true)}
-              className="
-                flex items-center gap-2
-                px-6 py-3
-                rounded-xl
-                bg-zinc-800
-                border border-zinc-700
-                font-bold uppercase text-sm
-                hover:border-yellow-400
-                hover:text-yellow-400
-                transition
-              "
+              className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl px-8 py-4 font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
             >
-              🎮 Test Mode
+              <span className="relative z-10 flex items-center gap-3">
+                🎮 Test Mode
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
           </div>
-
         </header>
 
         {/* Filters */}
@@ -158,13 +151,16 @@ export const Gallery = () => {
 
         {/* Loading */}
         {loading && (
-          <p className="text-center text-zinc-400">Loading icons...</p>
-        )} 
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-16 h-16 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin"></div>
+            <p className="text-gray-400 mt-4">Loading your icons...</p>
+          </div>
+        )}
 
         {/* Grid */}
         {!loading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            {groupedIcons.map(group => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 lg:gap-6">
+            {groupedIcons.map((group) => (
               <IconCard
                 key={group[0].character_id}
                 icons={group}
@@ -176,121 +172,105 @@ export const Gallery = () => {
         )}
 
         {quizOpen && (
-          <QuizModal
-            icons={icons}
-            onClose={() => setQuizOpen(false)}
-          />
+          <QuizModal icons={icons} onClose={() => setQuizOpen(false)} />
         )}
+      </div>
 
-        {/* Bouton suggestion */}
+      {/* Floating action buttons */}
+      <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
         <button
           onClick={() => setIsSuggestionOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 rounded-full
-          text-black font-bold text-lg shadow-lg
-          hover:bg-yellow-500 transition
-          flex items-center justify-center z-50"
-          >
+          className="group w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-2xl shadow-yellow-500/50 flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 hover:rotate-12"
+          title="Suggest a character"
+        >
           💡
         </button>
 
         <button
           onClick={() => setIsSuggestionListOpen(true)}
-          className="fixed bottom-6 right-24 w-16 h-16 rounded-full
-                    text-black font-bold text-lg shadow-lg
-                    hover:bg-yellow-500 transition
-                    flex items-center justify-center z-50"
-          title="Already suggested characters"
+          className="group w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 hover:bg-white/20"
+          title="View suggestions"
         >
           📋
         </button>
+      </div>
 
-        {/* Portfolio */}
+      {/* Bottom left buttons */}
+      <div className="fixed bottom-8 left-8 flex gap-4 z-50">
+        <a
+          href="https://ko-fi.com/gabun"
+          className="group w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-center overflow-hidden transition-all duration-300 hover:scale-110 hover:bg-white/20"
+          title="Support on Ko-fi"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            alt="Ko-fi"
+            src="/KoFiLogo.webp"
+            className="w-10 h-10 object-contain"
+          />
+        </a>
+
         <a
           href="https://gabun-portfolio.vercel.app/"
-          className="fixed bottom-6 left-24 w-16 h-16 rounded-full
-          text-black font-bold text-lg shadow-lg
-          hover:bg-yellow-500 hover:border-none transition
-          flex items-center justify-center z-50"
-          title="See my portolio"
+          className="group w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 hover:bg-white/20"
+          title="View portfolio"
           target="_blank"
+          rel="noopener noreferrer"
         >
           👤
         </a>
+      </div>
 
-        {/* Ko-Fi */}
-        <a
-          href="https://ko-fi.com/gabun"
-          className="fixed bottom-6 left-6 w-16 h-16 rounded-full
-          text-black font-bold text-lg shadow-lg
-          hover:bg-yellow-100 hover:border-none transition
-          flex items-center justify-center z-50"
-          title="Go to my Ko Fi"
-          target="_blank"
-        >
-          <img alt="Ko Fi logo" src="/KoFiLogo.webp"/>
-        </a>
-
-        {/* Modale suggestion */}
-        {isSuggestionOpen && (
-          <div
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
+      {/* Suggestion Modal */}
+      {isSuggestionOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setIsSuggestionOpen(false)}
+        >
+          <div
+            className="bg-[#1a1a1a] border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="bg-zinc-900 p-6 rounded-lg max-w-md w-full"
-              onClick={e => e.stopPropagation()}
-              >
-              <Suggestion />
+            <Suggestion />
+            <button
+              onClick={() => setIsSuggestionOpen(false)}
+              className="mt-6 w-full bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Suggestion List Modal */}
+      {isSuggestionListOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setIsSuggestionListOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1a1a1a] border border-white/10 rounded-3xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-8 py-6 border-b border-white/10">
+              <h2 className="font-bold text-2xl">Suggested Characters</h2>
               <button
-                onClick={() => setIsSuggestionOpen(false)}
-                className="mt-4 bg-red-600 px-4 py-2 rounded font-bold text-sm"
-                >
-                Close
+                onClick={() => setIsSuggestionListOpen(false)}
+                className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300"
+              >
+                ✕
               </button>
             </div>
-          </div>
-        )}
 
-        {/* Modale liste */}
-        {isSuggestionListOpen && (
-          <div
-            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4"
-            onClick={() => setIsSuggestionListOpen(false)}
-          >
-            <div
-              onClick={e => e.stopPropagation()}
-              className="bg-zinc-900 rounded-lg w-full max-w-5xl
-                        max-h-[90vh] flex flex-col overflow-hidden"
-            >
-              {/* Header fixe */}
-              <div
-                className="flex items-center justify-between
-                          px-6 py-4 border-b border-zinc-700"
-              >
-                <h2 className="font-extrabold tracking-widest uppercase text-sm sm:text-base">
-                  Already suggested characters
-                </h2>
-
-                <button
-                  onClick={() => setIsSuggestionListOpen(false)}
-                  className="w-10 h-10 flex items-center justify-center
-                            text-zinc-400 hover:text-white
-                            hover:bg-zinc-800 rounded-full transition"
-                  aria-label="Close"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Contenu scrollable */}
-              <div className="p-6 overflow-y-auto">
-                <SuggestionList />
-              </div>
+            {/* Content */}
+            <div className="p-8 overflow-y-auto">
+              <SuggestionList />
             </div>
           </div>
-        )}
-
-      </div>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};

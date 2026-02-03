@@ -1,107 +1,93 @@
-import { useState } from "react"
-import type { Icon } from "../types/icon"
+import { useState } from "react";
+import type { Icon } from "../types/icon";
 
 type Props = {
-  icons: Icon[]
-  hasSeen: (id: string) => boolean
-  markAsSeen: (id: string) => void
-}
+  icons: Icon[];
+  hasSeen: (id: string) => boolean;
+  markAsSeen: (id: string) => void;
+};
 
 export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
-  const [open, setOpen] = useState(false)
-  const [index, setIndex] = useState(0)
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
 
-  const hasMultiple = icons.length > 1
-  const icon = icons[index]
+  const hasMultiple = icons.length > 1;
+  const icon = icons[index];
 
   const prev = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIndex(i => (i - 1 + icons.length) % icons.length)
-  }
+    e.stopPropagation();
+    setIndex((i) => (i - 1 + icons.length) % icons.length);
+  };
 
-  const characterId = icons[0].character_id
-  const isNew = !hasSeen(characterId)
+  const characterId = icons[0].character_id;
+  const isNew = !hasSeen(characterId);
 
   const next = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIndex(i => (i + 1) % icons.length)
-  }
+    e.stopPropagation();
+    setIndex((i) => (i + 1) % icons.length);
+  };
 
   const downloadFile = async (url: string, filename: string) => {
-    const res = await fetch(url)
-    const blob = await res.blob()
+    const res = await fetch(url);
+    const blob = await res.blob();
 
-    const blobUrl = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
 
-    a.href = blobUrl
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
 
-    a.remove()
-    window.URL.revokeObjectURL(blobUrl)
-  }
-
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  };
 
   return (
     <>
       {/* Card */}
       <div
-        onClick={() => {
-          setOpen(true)
-        }}
-        className="relative group cursor-pointer bg-zinc-900 border-2 border-zinc-700
-                   rounded-md p-3 aspect-square
-                   hover:scale-105 transition-all duration-200"
+        onClick={() => setOpen(true)}
+        className="group relative cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 aspect-square transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:border-white/20 hover:shadow-2xl hover:shadow-purple-500/20"
       >
-
+        {/* New indicator */}
         {isNew && (
-          <span
-            className="
-              absolute top-2 left-2
-              w-3 h-3
-              bg-cyan-400
-              rounded-full
-              shadow-[0_0_8px_2px_rgba(34,211,238,0.8)]
-              animate-pulse
-              transition-opacity duration-300
-            "
-          />
+          <div className="absolute -top-2 -right-2 z-10">
+            <span className="relative flex h-4 w-4">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-400 shadow-lg shadow-cyan-400/50"></span>
+            </span>
+          </div>
         )}
 
-        {/* Badge count */}
+        {/* Count badge */}
         {hasMultiple && (
-          <div className="absolute top-2 right-2 bg-zinc-900 border-2 border-zinc-700 text-white
-                          text-xs font-bold px-2 py-1 z-10 rounded-full">
+          <div className="absolute top-3 right-3 bg-purple-600/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full z-10 shadow-lg">
             {icons.length}
           </div>
         )}
 
-        {/* Image */}
-        <div className="w-full h-full flex items-center justify-center">
+        {/* Image container */}
+        <div className="w-full h-full flex items-center justify-center p-2">
           <img
             src={icon.svgpath ?? icon.pngpath}
             alt={icon.name}
-            className="max-w-full max-h-full object-contain
-                       group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+            className="max-w-full max-h-full object-contain transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_20px_rgba(168,85,247,0.6)]"
           />
         </div>
 
-        {/* Arrows */}
+        {/* Navigation arrows - always visible on mobile, show on hover on desktop */}
         {hasMultiple && (
           <>
             <button
               onClick={prev}
-              className="absolute left-1 top-1/2 -translate-y-1/2
-                         bg-black/60 text-white px-2 py-1 text-sm"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/60 backdrop-blur-md text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-black/80 hover:scale-110 z-20"
             >
               ◀
             </button>
             <button
               onClick={next}
-              className="absolute right-1 top-1/2 -translate-y-1/2
-                         bg-black/60 text-white px-2 py-1 text-sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/60 backdrop-blur-md text-white rounded-full md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:bg-black/80 hover:scale-110 z-20"
             >
               ▶
             </button>
@@ -109,70 +95,75 @@ export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
         )}
 
         {/* Name */}
-        <p
-          className="mt-2 text-sm font-bold text-center truncate w-full"
-          title={icon.name}
-        >
-          {icon.name}
-        </p>
-
-
-        {/* Category */}
-        <p
-          className="mt-1 text-center text-xs uppercase text-zinc-500 truncate w-full"
-          title={icons[0].category}
-        >
-          {icons[0].category}
-        </p>
+        <div className="mt-3 space-y-1">
+          <p
+            className="text-sm font-semibold text-center truncate w-full"
+            title={icon.name}
+          >
+            {icon.name}
+          </p>
+          <p
+            className="text-xs text-center text-gray-400 truncate w-full uppercase tracking-wider"
+            title={icons[0].category}
+          >
+            {icons[0].category}
+          </p>
+        </div>
       </div>
 
-      {/* Modal preview */}
+      {/* Modal */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 animate-fadeIn"
           onClick={() => {
-            setOpen(false)
-            markAsSeen(characterId)
+            setOpen(false);
+            markAsSeen(characterId);
           }}
         >
           <div
-            onClick={e => e.stopPropagation()}
-            className="bg-zinc-900 border-4 border-yellow-400
-                       p-6 rounded-lg max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+            className="bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-purple-500/30 rounded-3xl p-8 max-w-2xl w-full shadow-2xl shadow-purple-500/20 animate-scaleIn"
           >
-            <img
-              src={icon.svgpath ?? icon.pngpath}
-              alt={icon.name}
-              className="block mx-auto max-w-full max-h-[70vh] object-contain"
-            />
+            {/* Image */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 mb-6">
+              <img
+                src={icon.svgpath ?? icon.pngpath}
+                alt={icon.name}
+                className="block mx-auto max-w-full max-h-[50vh] object-contain drop-shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+              />
+            </div>
 
-            <div className="mt-4 text-center">
-              <p className="uppercase font-bold tracking-wider">
-                {icon.name}
-              </p>
+            {/* Info */}
+            <div className="text-center space-y-4">
+              <div>
+                <p className="text-2xl font-bold tracking-tight">{icon.name}</p>
+                <p className="text-sm text-gray-400 mt-1 uppercase tracking-wider">
+                  {icons[0].category}
+                </p>
+              </div>
 
-              <div className="mt-4 flex gap-3 justify-center">
+              {/* Download buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
                 {icon.pngpath && (
                   <button
                     onClick={() => {
-                      if (!icon.pngpath) return
-                      downloadFile(icon.pngpath, `${icon.name}.png`)
+                      if (!icon.pngpath) return;
+                      downloadFile(icon.pngpath, `${icon.name}.png`);
                     }}
-                    className="bg-yellow-400 text-black px-4 py-2
-                              text-sm font-bold uppercase"
+                    className="w-full sm:w-auto group relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/50"
                   >
-                    Download PNG
+                    <span className="relative z-10">Download PNG</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
                 )}
 
                 {icon.svgpath && (
                   <button
                     onClick={() => {
-                      if (!icon.svgpath) return
-                      downloadFile(icon.svgpath, `${icon.name}.svg`)
+                      if (!icon.svgpath) return;
+                      downloadFile(icon.svgpath, `${icon.name}.svg`);
                     }}
-                    className="bg-yellow-400 text-black px-4 py-2
-                              text-sm font-bold uppercase"
+                    className="w-full sm:w-auto group relative overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:border-white/30"
                   >
                     Download SVG
                   </button>
@@ -182,6 +173,36 @@ export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+
+        .animate-scaleIn {
+          animation: scaleIn 0.3s ease-out;
+        }
+      `}</style>
     </>
-  )
-}
+  );
+};
