@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Icon } from "../types/icon";
 
 type Props = {
@@ -43,6 +43,29 @@ export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
     window.URL.revokeObjectURL(blobUrl);
   };
 
+  // Construire l'URL du symbole de franchise
+  const franchiseSymbolUrl = `https://utnweavpbajitnjsuxff.supabase.co/storage/v1/object/public/symbols/${icons[0].category}.svg`;
+  const defaultSymbolUrl =
+    "https://utnweavpbajitnjsuxff.supabase.co/storage/v1/object/public/symbols/other.svg";
+
+  const [symbolUrl, setSymbolUrl] = useState(franchiseSymbolUrl);
+
+  // Vérifier si le symbole existe au chargement
+  useEffect(() => {
+    const checkSymbolExists = async () => {
+      try {
+        const response = await fetch(franchiseSymbolUrl, { method: "HEAD" });
+        if (!response.ok) {
+          setSymbolUrl(defaultSymbolUrl);
+        }
+      } catch {
+        setSymbolUrl(defaultSymbolUrl);
+      }
+    };
+
+    checkSymbolExists();
+  }, [franchiseSymbolUrl, defaultSymbolUrl]);
+
   return (
     <>
       {/* Card */}
@@ -50,6 +73,16 @@ export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
         onClick={() => setOpen(true)}
         className="group relative cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 aspect-square transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:border-white/20 hover:shadow-2xl hover:shadow-purple-500/20"
       >
+        {/* Franchise symbol - top left corner behind character icon */}
+        <div className="absolute top-2 left-2 w-12 h-12 opacity-30 z-0 pointer-events-none">
+          <img
+            src={symbolUrl}
+            alt={`${icons[0].category} symbol`}
+            className="w-full h-full object-contain"
+            onError={() => setSymbolUrl(defaultSymbolUrl)}
+          />
+        </div>
+
         {/* New indicator */}
         {isNew && (
           <div className="absolute -top-2 -right-2 z-10">
@@ -68,7 +101,7 @@ export const IconCard = ({ icons, hasSeen, markAsSeen }: Props) => {
         )}
 
         {/* Image container */}
-        <div className="w-full h-full flex items-center justify-center p-2">
+        <div className="w-full h-full flex items-center justify-center p-2 relative z-[1]">
           <img
             src={icon.svgpath ?? icon.pngpath}
             alt={icon.name}

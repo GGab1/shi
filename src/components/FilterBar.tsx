@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 
 type Props = {
@@ -12,6 +12,32 @@ type Props = {
   categoryCounts: Record<string, number>;
   sortNew: boolean;
   setSortNew: Dispatch<SetStateAction<boolean>>;
+};
+
+// Hook pour charger le symbole de chaque franchise
+const useFranchiseSymbol = (category: string) => {
+  const franchiseSymbolUrl = `https://utnweavpbajitnjsuxff.supabase.co/storage/v1/object/public/symbols/${category}.svg`;
+  const defaultSymbolUrl =
+    "https://utnweavpbajitnjsuxff.supabase.co/storage/v1/object/public/symbols/other.svg";
+
+  const [symbolUrl, setSymbolUrl] = useState(franchiseSymbolUrl);
+
+  useEffect(() => {
+    const checkSymbolExists = async () => {
+      try {
+        const response = await fetch(franchiseSymbolUrl, { method: "HEAD" });
+        if (!response.ok) {
+          setSymbolUrl(defaultSymbolUrl);
+        }
+      } catch {
+        setSymbolUrl(defaultSymbolUrl);
+      }
+    };
+
+    checkSymbolExists();
+  }, [franchiseSymbolUrl, defaultSymbolUrl]);
+
+  return symbolUrl;
 };
 
 export const FilterBar = ({
@@ -206,9 +232,11 @@ export const FilterBar = ({
             const active = selectedCategories.includes(cat);
 
             return (
-              <button
+              <CategoryButton
                 key={cat}
-                type="button"
+                category={cat}
+                active={active}
+                count={categoryCounts[cat] ?? 0}
                 onClick={(e) => {
                   if (hasDragged.current) {
                     e.preventDefault();
@@ -216,31 +244,7 @@ export const FilterBar = ({
                   }
                   toggleCategory(cat);
                 }}
-                className={`
-                  shrink-0 px-6 py-3 rounded-2xl font-bold text-sm
-                  backdrop-blur-xl border whitespace-nowrap
-                  flex items-center gap-3 transition-all duration-300
-                  ${
-                    active
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 border-purple-500/50 text-white shadow-lg shadow-purple-500/50 scale-105"
-                      : "bg-white/5 border-white/10 text-gray-300 hover:border-white/30 hover:bg-white/10 hover:scale-105"
-                  }
-                `}
-              >
-                <span>{cat}</span>
-                <span
-                  className={`
-                    text-xs px-2.5 py-1 rounded-full font-bold
-                    ${
-                      active
-                        ? "bg-white/20 text-white"
-                        : "bg-white/10 text-gray-400"
-                    }
-                  `}
-                >
-                  {categoryCounts[cat] ?? 0}
-                </span>
-              </button>
+              />
             );
           })}
         </div>
@@ -255,5 +259,57 @@ export const FilterBar = ({
         </button>
       </div>
     </div>
+  );
+};
+
+// Composant séparé pour chaque bouton de catégorie avec son symbole
+const CategoryButton = ({
+  category,
+  active,
+  count,
+  onClick,
+}: {
+  category: string;
+  active: boolean;
+  count: number;
+  onClick: (e: React.MouseEvent) => void;
+}) => {
+  const symbolUrl = useFranchiseSymbol(category);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`
+        relative shrink-0 px-6 py-3 rounded-2xl font-bold text-sm
+        backdrop-blur-xl border whitespace-nowrap overflow-hidden
+        flex items-center gap-3 transition-all duration-300
+        ${
+          active
+            ? "bg-gradient-to-r from-purple-600 to-pink-600 border-purple-500/50 text-white shadow-lg shadow-purple-500/50 scale-105"
+            : "bg-white/5 border-white/10 text-gray-300 hover:border-white/30 hover:bg-white/10 hover:scale-105"
+        }
+      `}
+    >
+      {/* Symbole de franchise en arrière-plan */}
+      <div className="absolute -left-1 w-10 h-10 opacity-30 z-0 pointer-events-none">
+        <img
+          src={symbolUrl}
+          alt={`${category} symbol`}
+          className="w-full h-full object-contain"
+        />
+      </div>
+
+      {/* Contenu du bouton */}
+      <span className="relative z-10">{category}</span>
+      <span
+        className={`
+          relative z-10 text-xs px-2.5 py-1 rounded-full font-bold
+          ${active ? "bg-white/20 text-white" : "bg-white/10 text-gray-400"}
+        `}
+      >
+        {count}
+      </span>
+    </button>
   );
 };
