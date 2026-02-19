@@ -20,6 +20,7 @@ export const Gallery = () => {
   const [franchiseSearch, setFranchiseSearch] = useState("");
   const [sortNew, setSortNew] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { hasSeen, markAsSeen } = useSeenCharacters();
 
   useEffect(() => {
@@ -36,6 +37,15 @@ export const Gallery = () => {
     fetchIcons();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const categories = Array.from(new Set(icons.map((i) => i.category)));
 
   const categoryCounts = icons.reduce<Record<string, number>>((acc, icon) => {
@@ -47,6 +57,13 @@ export const Gallery = () => {
     setSelectedCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
     );
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const filteredIcons = icons
@@ -178,6 +195,32 @@ export const Gallery = () => {
 
       {/* Floating action buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+        {showScrollTop && (
+          <button
+            onClick={scrollToTop}
+            className="group w-16 h-16 rounded-full 
+               bg-white/10 backdrop-blur-xl border border-white/20 
+               shadow-xl flex items-center justify-center 
+               transition-all duration-300 
+               hover:scale-110 hover:bg-white/20"
+            title="Back to top"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2.5}
+              stroke="currentColor"
+              className="w-8 h-8 text-white transition-transform duration-300 group-hover:-translate-y-1"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 15l7-7 7 7"
+              />
+            </svg>
+          </button>
+        )}
         <button
           onClick={() => setIsSuggestionOpen(true)}
           className="group w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-2xl shadow-yellow-500/50 flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 hover:rotate-12"
