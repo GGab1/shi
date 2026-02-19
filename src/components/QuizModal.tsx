@@ -156,6 +156,8 @@ export const QuizModal = ({ icons, onClose }: Props) => {
     );
   }
 
+  if (!question) return null;
+
   return (
     <div
       className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 animate-fadeIn"
