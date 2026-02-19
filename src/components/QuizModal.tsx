@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Icon } from "../types/icon";
 
 type Props = {
@@ -11,28 +11,44 @@ type Question = {
   answers: string[];
 };
 
-const QUESTIONS_COUNT = 10;
-
 export const QuizModal = ({ icons, onClose }: Props) => {
+  const [mode, setMode] = useState<"classic" | "endless">("classic");
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
+  const [gameOver, setGameOver] = useState(false);
 
-  const characters = (() => {
+  const [bestScore, setBestScore] = useState<number>(() => {
+    const stored = sessionStorage.getItem("quizBestScore");
+    return stored ? parseInt(stored) : 0;
+  });
+
+  const characters = useMemo(() => {
     const grouped: Record<string, Icon[]> = {};
     for (const icon of icons) {
       if (!grouped[icon.character_id]) grouped[icon.character_id] = [];
       grouped[icon.character_id].push(icon);
     }
     return Object.values(grouped);
-  })();
+  }, [icons]);
+
+  const shuffledCharacters = useMemo(() => {
+    return [...characters].sort(() => 0.5 - Math.random());
+  }, [characters, mode]);
+
+  const QUESTIONS_COUNT = mode === "classic" ? 10 : shuffledCharacters.length;
 
   useEffect(() => {
     if (characters.length < 4) return;
+    if (questionIndex >= QUESTIONS_COUNT) return;
+    if (gameOver) return;
 
     const correctGroup =
-      characters[Math.floor(Math.random() * characters.length)];
+      mode === "classic"
+        ? characters[Math.floor(Math.random() * characters.length)]
+        : shuffledCharacters[questionIndex];
+
     const correctIcon =
       correctGroup[Math.floor(Math.random() * correctGroup.length)];
 
@@ -48,51 +64,86 @@ export const QuizModal = ({ icons, onClose }: Props) => {
 
     setQuestion({ icon: correctIcon, answers });
     setAnswered(false);
-  }, [questionIndex, icons]);
+  }, [questionIndex, mode, shuffledCharacters]);
 
-  if (!question) return null;
-
-  const handleAnswer = (name: string) => {
-    if (answered) return;
-    setAnswered(true);
-
-    if (name === question.icon.name) {
-      setScore((s) => s + 1);
+  useEffect(() => {
+    if (gameOver && score > bestScore) {
+      setBestScore(score);
+      sessionStorage.setItem("quizBestScore", score.toString());
     }
+  }, [gameOver, score, bestScore]);
 
-    setTimeout(() => {
-      setQuestionIndex((i) => i + 1);
-    }, 800);
+  if (!question && !gameOver) return null;
+
+  const resetGame = (newMode: "classic" | "endless") => {
+    setMode(newMode);
+    setQuestionIndex(0);
+    setScore(0);
+    setGameOver(false);
   };
 
-  // Quiz finished
-  if (questionIndex >= QUESTIONS_COUNT) {
-    const percentage = Math.round((score / QUESTIONS_COUNT) * 100);
+  const handleAnswer = (name: string) => {
+    if (answered || gameOver) return;
+    setAnswered(true);
+
+    if (name === question!.icon.name) {
+      setScore((s) => s + 1);
+      setTimeout(() => {
+        setQuestionIndex((i) => i + 1);
+      }, 800);
+    } else {
+      if (mode === "endless") {
+        setTimeout(() => {
+          setGameOver(true);
+        }, 800);
+      } else {
+        setTimeout(() => {
+          setQuestionIndex((i) => i + 1);
+        }, 800);
+      }
+    }
+  };
+
+  // FIN DU QUIZ
+  if (gameOver || questionIndex >= QUESTIONS_COUNT) {
+    const percentage =
+      mode === "classic" ? Math.round((score / 10) * 100) : 100;
 
     return (
       <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 animate-fadeIn">
         <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-purple-500/30 rounded-3xl p-10 text-center max-w-md w-full shadow-2xl shadow-purple-500/20">
           <div className="mb-8">
             <div className="text-6xl mb-4">
-              {percentage >= 80
-                ? "🏆"
-                : percentage >= 60
-                  ? "⭐"
-                  : percentage >= 40
-                    ? "👍"
-                    : "💪"}
+              {mode === "endless"
+                ? "💀"
+                : percentage >= 80
+                  ? "🏆"
+                  : percentage >= 60
+                    ? "⭐"
+                    : percentage >= 40
+                      ? "👍"
+                      : "💪"}
             </div>
-            <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
+            <h2 className="text-3xl font-bold mb-2">
+              {mode === "endless" ? "Game Over!" : "Quiz Complete!"}
+            </h2>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-6">
             <div className="text-5xl font-black mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              {score} / {QUESTIONS_COUNT}
+              {mode === "classic" ? `${score} / 10` : score}
             </div>
             <p className="text-gray-400 uppercase tracking-wider text-sm">
-              Correct answers
+              {mode === "classic" ? "Correct answers" : "Score"}
             </p>
           </div>
+
+          {mode === "endless" && (
+            <p className="text-gray-400 mb-6">
+              Best score this session:{" "}
+              <span className="text-white font-bold">{bestScore}</span>
+            </p>
+          )}
 
           <button
             onClick={onClose}
@@ -114,16 +165,44 @@ export const QuizModal = ({ icons, onClose }: Props) => {
         onClick={(e) => e.stopPropagation()}
         className="bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-purple-500/30 rounded-3xl w-full max-w-lg p-8 shadow-2xl shadow-purple-500/20"
       >
-        {/* Header */}
+        {/* Header compact */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-5 py-2">
-              <span className="text-sm font-bold">
-                {questionIndex + 1} / {QUESTIONS_COUNT}
-              </span>
-            </div>
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-full px-5 py-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            {mode === "classic" && (
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2">
+                <span className="text-sm font-bold">
+                  {questionIndex + 1} / 10
+                </span>
+              </div>
+            )}
+
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-full px-4 py-2">
               <span className="text-sm font-bold">⭐ {score}</span>
+            </div>
+
+            {/* MODE SWITCH intégré */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => resetGame("classic")}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                  mode === "classic"
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300 hover:bg-white/10"
+                }`}
+              >
+                Classic
+              </button>
+
+              <button
+                onClick={() => resetGame("endless")}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                  mode === "endless"
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300 hover:bg-white/10"
+                }`}
+              >
+                Endless
+              </button>
             </div>
           </div>
 
@@ -137,9 +216,6 @@ export const QuizModal = ({ icons, onClose }: Props) => {
 
         {/* Question */}
         <div className="mb-8">
-          <p className="text-center text-gray-400 uppercase tracking-wider text-sm mb-4">
-            Who is this character?
-          </p>
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex items-center justify-center">
             <img
               src={question.icon.pngpath}
