@@ -5,6 +5,7 @@ import { FilterBar } from "../components/FilterBar";
 import { Suggestion } from "./Suggestion";
 import { CommissionBanner } from "../components/CommissionBanner";
 import { SuggestionList } from "../components/SuggestionList";
+import { AdminSuggestionForm } from "../components/AdmnSuggestionForm";
 import { QuizModal } from "../components/QuizModal";
 import { useSeenCharacters } from "../hooks/useSeenCharacters";
 
@@ -21,6 +22,7 @@ export const Gallery = () => {
   const [sortNew, setSortNew] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { hasSeen, markAsSeen } = useSeenCharacters();
 
   useEffect(() => {
@@ -96,6 +98,7 @@ export const Gallery = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#121212] to-[#0a0a0a] text-white">
+      {isAdmin && <AdminSuggestionForm onClose={() => setIsAdmin(false)} />}
       <CommissionBanner />
 
       {/* Main container with max width */}
@@ -104,7 +107,15 @@ export const Gallery = () => {
         <header className="mb-12">
           {/* Title and subtitle - centered */}
           <div className="text-center mb-8">
-            <h1 className="text-5xl lg:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+            <h1
+              onDoubleClick={() => {
+                const pass = prompt("Admin password?");
+                if (pass === "sikour") {
+                  setIsAdmin(true);
+                }
+              }}
+              className="text-5xl lg:text-7xl font-black tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent"
+            >
               Smash Head Icons
             </h1>
             <p className="text-gray-400 mt-3 text-lg font-medium">
