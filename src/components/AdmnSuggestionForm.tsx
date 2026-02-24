@@ -26,7 +26,8 @@ export const AdminSuggestionForm = ({ onClose }: Props) => {
     setCharacterName("");
     setFranchise("");
     setLoading(false);
-    onClose();
+    setCharacterName("");
+    setFranchise("");
   };
 
   const handleDeleteFranchise = async () => {
