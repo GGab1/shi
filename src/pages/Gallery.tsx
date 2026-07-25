@@ -78,13 +78,27 @@ export const Gallery = () => {
         .toLowerCase()
         .includes(search.toLowerCase());
 
+      const searchValue = franchiseSearch.toLowerCase().trim();
+
       const matchesFranchise = icon.category
         .toLowerCase()
-        .includes(franchiseSearch.toLowerCase());
+        .includes(searchValue);
+
+      const matchesCode = icon.code && icon.code.toLowerCase() === searchValue;
 
       const matchesSeen = !sortNew || !hasSeen(icon.character_id);
 
-      return matchesCategory && matchesName && matchesFranchise && matchesSeen;
+      const isHidden = !!icon.code;
+
+      const isVisible = !isHidden || matchesCode;
+
+      return (
+        matchesCategory &&
+        matchesName &&
+        matchesSeen &&
+        (matchesFranchise || matchesCode) &&
+        isVisible
+      );
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
