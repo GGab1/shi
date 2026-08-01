@@ -48,12 +48,21 @@ export const Gallery = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const categories = Array.from(new Set(icons.map((i) => i.category)));
+  const visibleIcons = icons.filter((icon) => {
+    if (!icon.code) return true;
 
-  const categoryCounts = icons.reduce<Record<string, number>>((acc, icon) => {
-    acc[icon.category] = (acc[icon.category] || 0) + 1;
-    return acc;
-  }, {});
+    return icon.code.toLowerCase() === franchiseSearch.trim().toLowerCase();
+  });
+
+  const categories = Array.from(new Set(visibleIcons.map((i) => i.category)));
+
+  const categoryCounts = visibleIcons.reduce<Record<string, number>>(
+    (acc, icon) => {
+      acc[icon.category] = (acc[icon.category] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
@@ -142,7 +151,7 @@ export const Gallery = () => {
             <div className="flex items-center gap-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-5 py-2.5">
               <span className="text-xl">🎨</span>
               <div className="flex items-baseline gap-1.5">
-                <p className="text-xl font-bold">{icons.length}</p>
+                <p className="text-xl font-bold">{visibleIcons.length}</p>
                 <p className="text-xs text-gray-400 uppercase tracking-wider">
                   icons
                 </p>
